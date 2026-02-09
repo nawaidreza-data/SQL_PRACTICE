@@ -209,3 +209,22 @@ from customers.reviews r
 inner join 
 
 -- Q100 – Customers who ordered every month in 2024
+
+
+
+
+
+-- 🧠 Advanced Filtering with Aggregates
+
+
+
+-- Q82 – Products with rating > 4.0 AND at least 20 reviews   from customers.reviews.
+
+select * from  customers.reviews;
+
+select prod_name,avg(rating) as Avg_rating ,count(reviews) as no_of_reviews
+
+from customers.reviews r 
+inner join 
+
+-- Q100 – Customers who ordered every month in 2024

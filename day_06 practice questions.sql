@@ -271,6 +271,8 @@ order by
     c.full_name,
     extract(month from o.order_date);
 
+
+
 -- Q1: Find customers who have spent more than the average order amount, showing customer name, total spending, and order count from customers.customers and sales.orders.
 
 -- Q2: Identify stores where total sales in 2024 exceeded ₹50 lakh and had more than 200 orders from sales.orders and stores.stores.

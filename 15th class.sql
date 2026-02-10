@@ -81,4 +81,67 @@ select full_name,state
 select * from sales.orders;
 
 select orders,count(order_id),avg
-	   
+
+
+
+-- Exercise 2 (Medium): Write a query that shows all stores with their employee count and classifies them as
+-- 'Understaffed' (<5), 'Optimal' (5-15), or 'Overstaffed' (>15).
+
+select s.store_name , case 
+                       when count(e.emp_id)<5 then 'Understaffed'
+					   when count(e.emp_id) between 5 and 15 then  'Optimal' 
+					   else 'Overstaffed'
+					   end as employee_count_classifies
+from stores.employees e 
+left join stores.stores s 
+on e.store_id=s.store_id
+group by s.store_name;
+
+
+select distinct total_amount from sales.orders;
+
+-- Exercise 3 (Hard): Create a comprehensive order analysis showing: order value tier, payment status 
+-- (using COALESCE for NULL amounts), and calculate 'Revenue per Day' using NULLIF to handle days with zero orders.
+select (Order_date) ,
+sum(coalesce (total_amount,0))/ nullif(count (order_id),0) as safe_amount,
+   case 
+      when sum(coalesce (total_amount,0)) is not null then'Paid' 
+	  else 'Pending'
+	  end as Payment_status,
+        case 
+         when sum(coalesce (total_amount,0))<100000 then 'Low Value'
+		 when  sum(coalesce (total_amount,0))< 300000 then 'Medium Value'
+		 else 'High Value'
+		 end as value_tier
+		 from sales.orders
+group by 1;
+
+
+-- Exercise 4 (Challenge): Build a store performance scorecard using nested CASE to classify stores based on both 
+-- their region AND sales performance.
+
+select s.store_name, s.region, sum(coalesce( o.total_amount,0)) as total_sales,
+case 
+    when s.region = 'North' then 
+	  case 
+	    when sum(coalesce (o.total_amount,0))<20000 then 'Mid North Score'
+	    when sum(coalesce (o.total_amount,0)) between 50000 and 200000 then 'Mid North Score'
+		else 'Low North Score'
+end 
+   when s.region = 'South' then 
+	  case 
+	    when sum(coalesce (o.total_amount,0))<20000 then 'Mid South Score'
+	    when sum(coalesce (o.total_amount,0)) between 50000 and 200000 then 'Mid South Score'
+		else 'Low SouthScore'
+end 
+        else 
+		 case 
+		    when sum(coalesce (o.total_amount,0))<20000 then 'Top Other region'
+			else 'Low oTher region'
+END
+    END AS store_performance_score
+from stores.stores s 
+inner join sales.orders o 
+on s.store_id=o.store_id
+group by 1,2;
+
